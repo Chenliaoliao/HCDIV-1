@@ -55,31 +55,31 @@
   </table>
 
   <script>
-    // Fetch the weather data from data.gov.sg API
-    fetch('https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast')
-      .then(response => response.json())
-      .then(responsedata => {
-        // Extract timestamp and forecasts data from response
-        let timestamp = responsedata.items[0].update_timestamp;
-        let forecasts = responsedata.items[0].forecasts;
+   fetch('https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast', { cache: 'no-store' })
+  .then(response => response.json())
+  .then(responsedata => {
+    console.log(JSON.stringify(responsedata, null, 2)); 
+    if (responsedata.data && responsedata.data.items && responsedata.data.items.length > 0) {
+      let timestamp = responsedata.data.items[0].update_timestamp;
+      let forecasts = responsedata.data.items[0].forecasts;
 
-        // Format and display the timestamp
-        document.getElementById("timestring").innerText = `Last Updated: ${new Date(timestamp).toLocaleString()}`;
+      document.getElementById("timestring").innerText = `Last Updated: ${new Date(timestamp).toLocaleString()}`;
 
-        // Find the table element and populate it with area and forecast data
-        const table = document.getElementById("weatherTable");
-        forecasts.forEach(forecast => {
-          // Create a new row and cells for area and forecast
-          const row = table.insertRow();
-          const areaCell = row.insertCell(0);
-          const forecastCell = row.insertCell(1);
+      const table = document.getElementById("weatherTable");
+      forecasts.forEach(forecast => {
+        const row = table.insertRow();
+        const areaCell = row.insertCell(0);
+        const forecastCell = row.insertCell(1);
 
-          // Set the cell values
-          areaCell.textContent = forecast.area;
-          forecastCell.textContent = forecast.forecast;
-        });
-      })
-      .catch(error => console.error('Error fetching the weather data:', error));
+        areaCell.textContent = forecast.area;
+        forecastCell.textContent = forecast.forecast;
+      });
+    } else {
+      console.error('No forecast data available.');
+    }
+  })
+  .catch(error => console.error('Error fetching the weather data:', error));
   </script>
 </body>
 </html>
+
